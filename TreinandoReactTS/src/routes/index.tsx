@@ -1,5 +1,6 @@
 import { Route, Routes as Switch, BrowserRouter, Navigate } from "react-router-dom"
-import { PagInicial } from "../PagInicial/PagInicial"
+import { PagInicial } from "../pages/PagInicial/PagInicial"
+import { Login } from "../pages/login/Login"
 
 export const Routes = () => {
 
@@ -7,6 +8,8 @@ export const Routes = () => {
     <BrowserRouter>
       <Switch>
         <Route path="/pagina-inicial" element={<PagInicial />} />
+        <Route path="/entrar" element={<Login />} />
+
         {/* adiciona um redirecionamento para uma pág, precisa ser a ult rota */}
         <Route path="*" element={ <Navigate to ="/pagina-inicial" />}/>
       </Switch>
