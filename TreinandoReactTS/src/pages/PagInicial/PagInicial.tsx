@@ -1,15 +1,35 @@
-import { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useCallback, useState } from "react";
 
 export const PagInicial = () => {
-  const counterRef = useRef({ counter: 0})
+  const [lista, setLista] = useState<string[]>([""]);
+const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = useCallback((e) => {
+  if(e.key === 'Enter') {
+    if(e.currentTarget.value.trim().length === 0) return;
+    //forma 1 de inserir itens na lista
+    // setLista([...lista, e.currentTarget.value]);
+
+    const value = e.currentTarget.value;
+    e.currentTarget.value = '';
+    setLista((oldLista) => {
+      return [...lista, value];
+    });
+  } 
+  return(
+    <h1>aol</h1>
+  )
+}, [lista]);
 
   return (
     <>
-      <p>PagInicial</p>
-      <p>Contador: {counterRef.current.counter}</p>
-      <button onClick={() => counterRef.current.counter++}>somar</button>
-      <Link to="/entrar">Login</Link>
+      <p>Lista</p>
+      <input 
+        onKeyDown={handleInputKeyDown}
+      />
+      <ul>
+        {lista.map((value, index) => {
+        return <li key={index}>{value}</li>;
+        })}
+      </ul>
     </>
   );
 };
