@@ -1,7 +1,15 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
 export const PagInicial = () => {
-  return <h1>
-          <Link to="/entrar">Login</Link>
-    PagInicial</h1>;
+  const counterRef = useRef({ counter: 0})
+
+  return (
+    <>
+      <p>PagInicial</p>
+      <p>Contador: {counterRef.current.counter}</p>
+      <button onClick={() => counterRef.current.counter++}>somar</button>
+      <Link to="/entrar">Login</Link>
+    </>
+  );
 };
