@@ -31,17 +31,17 @@ const create = async (dataToCreate: Omit<ITarefa, "id">): Promise<ITarefa | ApiE
     return new ApiException(error.message || "Erro ao criar o registro.");
   }
 };
-const updateById = async (id: string, dataToUpdate: ITarefa): Promise<ITarefa | ApiException> => {
+const updateById = async (id: number, dataToUpdate: ITarefa): Promise<ITarefa | ApiException> => {
   try {
-    const {data} = await Api().put<any>(`/tarefas${id}`, dataToUpdate);
+    const {data} = await Api().put<any>(`/tarefas/${id}`, dataToUpdate);
     return data;
   } catch (error: any) {
     return new ApiException(error.message || "Erro ao atualizar o registro.");
   }
 };
-const deleteById = async (id: string): Promise<undefined | ApiException> => {
+const deleteById = async (id: number): Promise<undefined | ApiException> => {
   try {
-    const {data} = await Api().get(`/tarefas${id}`);
+    await Api().delete(`/tarefas/${id}`);
     return undefined;
   } catch (error: any) {
     return new ApiException(error.message || "Erro ao apagar o registro.");

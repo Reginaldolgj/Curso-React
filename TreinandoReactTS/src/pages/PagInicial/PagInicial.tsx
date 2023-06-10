@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { ITarefa, TarefasService } from "../../services/api/tarefas/tarefasService";
+import {
+  ITarefa,
+  TarefasService,
+} from "../../services/api/tarefas/tarefasService";
 import { ApiException } from "../../services/api/ApiException";
 
 export const PagInicial = () => {
@@ -7,70 +10,95 @@ export const PagInicial = () => {
 
   useEffect(() => {
     TarefasService.getAll()
-    .then((result) => {
-      if(result instanceof ApiException) {
-        alert(result.message);
-      } else {
-        setLista(result);
-      }
-    })
+      .then((result) => {
+        if (result instanceof ApiException) {
+          alert(result.message);
+        } else {
+          setLista(result);
+        }
+      });
+  }, []);
 
-  },[]);
-  const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> =
-    useCallback((e) => {
-      if (e.key === "Enter") {
-        if (e.currentTarget.value.trim().length === 0) return;
-        //forma 1 de inserir itens na lista
-        // setLista([...lista, e.currentTarget.value]);
+  const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = useCallback((e) => {
+    if (e.key === 'Enter') {
+      if (e.currentTarget.value.trim().length === 0) return;
 
-        const value = e.currentTarget.value;
+      const value = e.currentTarget.value;
 
-        e.currentTarget.value = "";
+      e.currentTarget.value = '';
 
-        setLista((oldLista) => {
-          if (oldLista.some((ListItem) => ListItem.title === value)) return oldLista;
+      if (lista.some((listItem) => listItem.title === value)) return;
 
-          return [
-            ...oldLista,
-            {
-              id: oldLista.length,
-              title: value,
-              isCompleted: false,
-            },
-          ];
+      TarefasService.create({ title: value, isCompleted: false })
+        .then((result) => {
+          if (result instanceof ApiException) {
+            alert(result.message);
+          } else {
+            setLista((oldLista) => [...oldLista, result]);
+          }
         });
-      }
-    }, []);
+    }
+  }, [lista]);
+
+  const handleToggleComplete = useCallback((id: number) => {
+    const tarefaToUpdate = lista.find((tarefa) => tarefa.id === id);
+    if (!tarefaToUpdate) return;
+
+    TarefasService.updateById(id, {
+      ...tarefaToUpdate,
+      isCompleted: !tarefaToUpdate.isCompleted,
+    })
+      .then((result) => {
+        if (result instanceof ApiException) {
+          alert(result.message);
+        } else {
+          setLista(oldLista => {
+            return oldLista.map(oldListItem => {
+              if (oldListItem.id === id) return result;
+              return oldListItem;
+            });
+          });
+        }
+      });
+  }, [lista]);
+
+  const handleDelete = useCallback((id: number) => {
+    TarefasService.deleteById(id)
+      .then((result) => {
+        if (result instanceof ApiException) {
+          alert(result.message);
+        } else {
+          setLista(oldLista => {
+            return oldLista.filter(oldListItem => oldListItem.id !== id);
+          });
+        }
+      });
+  }, []);
 
   return (
-    <>
+    <div>
       <p>Lista</p>
-      <input onKeyDown={handleInputKeyDown} />
-      <p>{lista.filter((ListItem) => ListItem.isCompleted).length}</p>
-      <ul>
-        {lista.map((ListItem) => { return <li key={ListItem.id}>
-              <input
-                type="checkbox"
-                onChange={() => {
-                  setLista((oldLista) => {
-                    return oldLista.map((oldListItem) => {
-                      const newIsSelected =
-                        oldListItem.title === ListItem.title
-                          ? !oldListItem.isCompleted
-                          : oldListItem.isCompleted;
 
-                      return {
-                        ...oldListItem,
-                        isSelect: newIsSelected,
-                      };
-                    });
-                  });
-                }}
-              />
-              {ListItem.title}
-            </li>
+      <input onKeyDown={handleInputKeyDown} />
+
+      <p>{lista.filter((listItem) => listItem.isCompleted).length}</p>
+
+      <ul>
+        {lista.map((listItem) => {
+          return <li key={listItem.id}>
+            <input
+              type="checkbox"
+              checked={listItem.isCompleted}
+              onChange={() => handleToggleComplete(listItem.id)}
+            />
+
+            {listItem.title}
+
+            <button onClick={() => handleDelete(listItem.id)}>Apagar tarefa</button>
+          </li>;
         })}
       </ul>
-    </>
+
+    </div>
   );
-};
+}
