@@ -8,7 +8,7 @@ export const Routes = () => {
     <BrowserRouter>
       <Switch>
         <Route path="/pagina-inicial" element={<PagInicial />} />
-        <Route path="/entrar" element={<Login />} />
+        <Route path="/ " element={<Login />} />
 
         {/* adiciona um redirecionamento para uma pág, precisa ser a ult rota */}
         <Route path="*" element={ <Navigate to ="/pagina-inicial" />}/>

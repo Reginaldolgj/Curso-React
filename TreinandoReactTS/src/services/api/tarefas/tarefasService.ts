@@ -1,7 +1,7 @@
 import { Api } from "../ApiContext";
 import { ApiException } from "../ApiException";
 
-interface ITarefa {
+export interface ITarefa {
   id: number;
   title: string;
   isCompleted: boolean;
@@ -12,7 +12,7 @@ const  getAll = async (): Promise<ITarefa[] | ApiException> => {
     const {data} = await Api().get('/tarefas');
     return data;
   } catch (error: any) {
-    return new ApiException(error.message || "Erro ao consultar API.");
+    return new ApiException(error.message || "Erro ao consultar 'todas' API.");
   }
 };
 const getById = async (id: number): Promise<ITarefa | ApiException> => {
@@ -44,7 +44,7 @@ const deleteById = async (id: string): Promise<undefined | ApiException> => {
     const {data} = await Api().get(`/tarefas${id}`);
     return undefined;
   } catch (error: any) {
-    return new ApiException(error.message || "Erro ao apagar API.");
+    return new ApiException(error.message || "Erro ao apagar o registro.");
   }
 };
 
